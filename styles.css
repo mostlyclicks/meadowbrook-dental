@@ -37,13 +37,20 @@ em { font-style: italic; color: var(--coral); }
 a { color: inherit; }
 
 /* ————— Header ————— */
+/* backdrop-filter lives on ::before (a sibling of .site-nav in the box
+   tree), NOT on .site-header itself — putting it on the header would make
+   the header the containing block for its fixed-position .site-nav child
+   on mobile, collapsing the full-screen menu to the header's own height. */
 .site-header {
   position: sticky; top: 0; z-index: 40;
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px clamp(20px, 5vw, 64px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
   background: color-mix(in srgb, var(--cream) 88%, transparent);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
 }
 
 .brand {
@@ -303,10 +310,11 @@ section { scroll-margin-top: 90px; }
   .service-detail h2 { position: static; }
 
   .site-nav {
-    position: fixed; inset: 64px 0 auto 0; z-index: 39;
+    position: fixed; inset: 64px 0 0 0; z-index: 39;
     flex-direction: column; align-items: stretch; gap: 0;
     background: var(--cream); border-bottom: 1px solid var(--line);
     display: none; padding: 8px 20px 20px;
+    overflow-y: auto;
   }
   .site-nav.open { display: flex; }
   .site-nav a { padding: 14px 4px; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
