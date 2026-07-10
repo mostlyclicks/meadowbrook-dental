@@ -34,11 +34,24 @@ var observer = new IntersectionObserver(
 )
 document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el) })
 
-// Demo booking form — no backend yet, show a confirmation state
+// Booking form — submits to RefreshWeb's shared contact endpoint
 var form = document.getElementById('booking-form')
 if (form) {
   form.addEventListener('submit', function (e) {
     e.preventDefault()
+    var data = new FormData(form)
+    fetch('https://refreshweb.io/api/client-contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientId: '8ccecd78-c1f2-4962-97bf-f3a143de7f73',
+        name: data.get('name'),
+        contact: data.get('contact'),
+        message: data.get('type'),
+        page: location.pathname,
+        hp: data.get('hp'),
+      }),
+    }).catch(function () {})
     form.classList.add('sent')
     form.innerHTML =
       '<p class="sent-msg">Thank you — we’ll be in touch within the hour to find you a time. 🦷</p>'
